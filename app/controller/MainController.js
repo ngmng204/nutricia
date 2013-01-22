@@ -8,7 +8,8 @@ Ext.define("sencha.controller.MainController", {
            acidButton: '#acid-btn',
            cardView: 'cardview',
            doneButton: '#done-btn',
-           configureView: 'configureview'
+           configureView: 'configureview',
+           settingButton: '#setting-btn'
 		},
 		control:{
            'vitaminButton':{
@@ -30,6 +31,9 @@ Ext.define("sencha.controller.MainController", {
            },
            'doneButton':{
                 tap: 'onDoneButtonTap'
+           },
+           'settingButton': {
+                tap: 'onSettingButtonTap'    
            }
            
         }
@@ -62,9 +66,25 @@ Ext.define("sencha.controller.MainController", {
     onPrecausionButtonTap: function(){
             this.getConfigureView().push({xtype: 'precausionlistview'})
     },
-   onDoneButtonTap: function(){
+    onDoneButtonTap: function(){
         console.log("onDoneButtonTap")
+           
+        var db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
+        db.transaction(updateDoneStatus, error)
         this.getCardView().setActiveItem(2)
-   }
+    },
+    onSettingButtonTap: function(){
+        console.log("onSettingButtonTap")
+        this.getCardView().setActiveItem(0)
+    }
 })
-  
+
+
+
+
+function updateDoneStatus(tx){
+        tx.executeSql("update done_status set done_status=1", [], updateDoneStatusSuccess, error)
+}
+function updateDoneStatusSuccess(tx, results){
+    console.log("update done status success")
+}
