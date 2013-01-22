@@ -4,15 +4,20 @@ Ext.define('sencha.view.CardView', {
            id: 'cardview-id',
            config: {
            layout: {
-           type: 'card'
+                type: 'card',
+                animation: {
+                type: 'slide',
+                        direction: 'left'
+                }
            },
            items: [
                    
-                   {
-                        xtype: 'configureview'
-                   },
+                   
                    {
                         xtype: 'launchview',
+                   },
+                   {
+                   xtype: 'configureview'
                    },
                    {
                         xtype: 'productnavigationview',

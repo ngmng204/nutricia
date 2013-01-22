@@ -10,7 +10,8 @@ Ext.define("sencha.controller.MainController", {
            doneButton: '#done-btn',
            configureView: 'configureview',
            settingButton: '#setting-btn',
-           diseaseListView: 'diseaselistview'
+           diseaseListView: 'diseaselistview',
+           configureButton: '#configuration-btn'
 		},
 		control:{
            'vitaminButton':{
@@ -38,6 +39,9 @@ Ext.define("sencha.controller.MainController", {
            },
            'diseaseListView': {
                 itemtap: 'onDiseaseItemSelect'   
+           },
+           'configureButton':{
+                tap: 'onConfigureButtonTap'  
            }
            
         }
@@ -90,5 +94,8 @@ Ext.define("sencha.controller.MainController", {
            sencha.app.currentDiseaseSelected = record.data.id
            var db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
            db.transaction(saveCheckedItemOfDisease, error);
+    },
+    onConfigureButtonTap:function(){
+            this.getCardView().setActiveItem(1)
     }
 })
