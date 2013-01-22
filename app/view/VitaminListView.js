@@ -1,7 +1,7 @@
 
 var tpl = new Ext.XTemplate(
                             '<tpl for=".">',
-                            '<input type="checkbox" onchange="saveStatusOfVitamin(this.id)" id="{[values.id]}" {[this.changeStatus(values.choose)]} /> {[values.name]}', //{[this.changeStatus(values.check)]}
+                            '<input type="checkbox" onchange="saveStatus(this.id)" id="{[values.id]}" {[this.changeStatus(values.choose)]} /> {[values.name]}', //{[this.changeStatus(values.check)]}
                             
                             '</tpl>',
                             {
@@ -31,7 +31,7 @@ Ext.define('sencha.view.VitaminListView', {
            }
            });
 
-function saveStatusOfVitamin(id){
+function saveStatus(id){
     var storeName = 'VitaminStore';
     sencha.app.currentId = id;
     saveByStore(id, storeName)
@@ -39,6 +39,7 @@ function saveStatusOfVitamin(id){
 }
 function saveByStore(id, storeName){
     sencha.app.storeName = storeName
+    
     var store = Ext.getStore(sencha.app.storeName);
     var currentRecord = store.findRecord('id', id)
     
@@ -66,16 +67,18 @@ function saveWhenCheck(tx){
 }
 
 function updateCheck(tx, results){
-    
+    console.log("aaa")
     var check = results.rows.item(0).choose;
     var status = !check;
-    
+    console.log(sencha.app.storeName)
     if(sencha.app.storeName == 'MineralStore')
             tx.executeSql("update minerals set choose=1 where id=" + results.rows.item(0).id, [], updateSuccess, error)
     if(sencha.app.storeName == 'AcidStore')
             tx.executeSql("update acids set choose=1 where id=" + results.rows.item(0).id, [], updateSuccess, error)
-    if(sencha.app.storeName == 'VitaminStore')
-            tx.executeSql("update vitamins set choose=1 where id=" + results.rows.item(0).id, [], updateSuccess, error)
+    if(sencha.app.storeName == 'VitaminStore'){
+        console.log('vitamin')
+        tx.executeSql("update vitamins set choose=1 where id=" + results.rows.item(0).id, [], updateSuccess, error)
+    }
     if(sencha.app.storeName == 'PrecausionStore')
             tx.executeSql("update precausions set choose=1 where id=" + results.rows.item(0).id, [], updateSuccess, error)
                    

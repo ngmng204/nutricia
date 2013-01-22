@@ -202,7 +202,8 @@ function queryChekedSuccess(current, results, tx){
     var conditionStr =""
     if(current == "disease"){
         if(results.rows.length == 0){
-            alert("You have to choose atleaset a disease for filtering")
+            alert("You have to choose atleaset a disease for filtering");
+           // exit;
         }else{
             //save to database disease checked
             //add to condition string

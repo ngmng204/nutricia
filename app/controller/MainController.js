@@ -1,3 +1,4 @@
+var cardView;
 Ext.define("sencha.controller.MainController", {
 	extend: "Ext.app.Controller",
 	config:{
@@ -76,17 +77,19 @@ Ext.define("sencha.controller.MainController", {
     },
     onDoneButtonTap: function(){
         console.log("onDoneButtonTap")
-           
+        cardView  = this.getCardView();   
         var db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
         db.transaction(updateDoneStatus, error);
         // Then save statement of query products
-        db.transaction(saveQueryStatement, error)
+        db.transaction(check, error)
+        //db.transaction(saveQueryStatement, error)
         
-        this.getCardView().setActiveItem(2)
+        
+        //this.getCardView().setActiveItem(2)
     },
     onSettingButtonTap: function(){
         console.log("onSettingButtonTap")
-        this.getCardView().setActiveItem(0)
+        this.getCardView().setActiveItem(1)
     },
     onDiseaseItemSelect: function(list, index, node, record ){
             console.log(record.data.id)
@@ -99,3 +102,15 @@ Ext.define("sencha.controller.MainController", {
             this.getCardView().setActiveItem(1)
     }
 })
+function check(tx){
+
+    tx.executeSql('select * from diseases where choose=1', [], function(tx, results){
+                  if(results.rows.length == 0){
+                        alert("a")
+                  }else{
+                          saveQueryStatement(tx)
+                          cardView.setActiveItem(2)
+                  }
+                  
+    }, error)
+}
