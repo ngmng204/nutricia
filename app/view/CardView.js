@@ -1,6 +1,7 @@
 Ext.define('sencha.view.CardView', {
            extend: 'Ext.Panel',
            xtype: 'cardview',
+           id: 'cardview-id',
            config: {
            layout: {
            type: 'card'
@@ -14,8 +15,8 @@ Ext.define('sencha.view.CardView', {
                         xtype: 'launchview',
                    },
                    {
-                        xtype: 'panel',
-                        html: 'test' 
+                        xtype: 'productnavigationview',
+                        //html: 'test'
                    }
                    ]
            }

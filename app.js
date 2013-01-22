@@ -8,16 +8,18 @@ Ext.application({
                          'VitaminStore',
                          'AcidStore',
                          'MineralStore',
-                         'PrecausionStore'
+                         'PrecausionStore',
+                         'ProductStore'
                 ],
                 models:['DiseaseModel',
                         'VitaminModel',
                         'AcidModel',
                         'MineralModel',
-                        'PrecausionModel'
+                        'PrecausionModel',
+                        'ProductModel'
                         
                 ],
-    views: ['Main', 'LaunchView', 'CardView', 'ConfigureView', 'DiseaseListView', 'VitaminListView', 'MineralListView', 'AcidListView', 'PrecausionListView', 'ProductNavigationView'],
+    views: ['Main', 'LaunchView', 'CardView', 'ConfigureView', 'DiseaseListView', 'VitaminListView', 'MineralListView', 'AcidListView', 'PrecausionListView', 'ProductNavigationView', 'ProductListView'],
                 controllers: ['MainController'],
     icon: {
         '57': 'resources/icons/Icon.png',
@@ -36,7 +38,7 @@ Ext.application({
         '1536x2008': 'resources/startup/1536x2008.png',
         '1496x2048': 'resources/startup/1496x2048.png'
     },
-
+                
     launch: function() {
         // Destroy the #appLoadingIndicator element
         Ext.fly('appLoadingIndicator').destroy();
@@ -50,6 +52,9 @@ Ext.application({
         
     },
     current: "",
+    conditionStr: "",
+    currentDiseaseSelected: "",
+    queryString: "",
     onUpdated: function() {
         Ext.Msg.confirm(
             "Application Update",
@@ -71,6 +76,18 @@ function checkDoneStatusSuccess(tx, results){
     console.log(results.rows.item(0).done_status)
     var doneStatus = results.rows.item(0).done_status;
     if(doneStatus == 1){
+        //set query string
+        tx.executeSql('select query_string from query_statement where id=1',
+                      [],
+                      function(tx, results){
+                            sencha.app.queryString = results.rows.item(0).query_string
+                            console.log(sencha.app.queryString)
+                            //render productlist
+                            renderProductList(tx, sencha.app.queryString)
+                      },
+                      error)
+        
+        
         var indexPanel = Ext.create('sencha.view.CardView');
         Ext.Viewport.add(indexPanel)
         Ext.getCmp('cardview-id').setActiveItem(2);
@@ -79,6 +96,20 @@ function checkDoneStatusSuccess(tx, results){
         Ext.Viewport.add(indexPanel)
         Ext.getCmp('cardview-id').setActiveItem(0);
     }
+}
+function renderProductList(tx, queryString){
+        tx.executeSql('select * from products' ,[], function(tx, results){ console.log(results.rows); bindProductStore(results)}, error)
+}
+function bindProductStore(results){
+        var store = Ext.getStore("ProductStore")
+        for(var i =0; i<results.rows.length; i++){
+            var object = new Object();
+            object.id = results.rows.item(i).id;
+            object.name = results.rows.item(i).name;
+            //object.choose = results.rows.item(i).choose;
+            var model = Ext.create("sencha.model.ProductModel", object)
+            store.add(model)
+        }
 }
 function queryDB(tx){
     sencha.app.current = "Disease";
@@ -133,20 +164,20 @@ function populateDB(tx){
     tx.executeSql('DROP TABLE IF EXISTS vitamins');
     tx.executeSql('CREATE TABLE if not exists vitamins(id INTEGER NOT NULL, name VARCHAR(25),  choose INTEGER(1), PRIMARY KEY (id))');
     tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (1, "Premier vitamins", 0)');
-    tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (2, "Seconde vitamins", 0)');
-    tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (3, "Seconde vitamins", 0)');
-    tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (4, "Seconde vitamins", 0)');
+    tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (2, "Seconde vitamins", 1)');
+    tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (3, "Seconde vitamins", 1)');
+    tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (4, "Seconde vitamins", 1)');
     tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (5, "Seconde vitamins", 0)');
     tx.executeSql('INSERT INTO vitamins (id, name, choose) VALUES (6, "Seconde vitamins", 0)');
     
     
     tx.executeSql('DROP TABLE IF EXISTS minerals');
     tx.executeSql('CREATE TABLE IF NOT EXISTS minerals (id INTEGER NOT NULL, name VARCHAR(25),  choose INTEGER(1), PRIMARY KEY (id))');
-    tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (1, "Premier minerals",0)');
+    tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (1, "Premier minerals",1)');
     tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (2, "Seconde minerals",0)');
     tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (3, "Seconde minerals",0)');
     tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (4, "Seconde minerals",0)');
-    tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (5, "Seconde minerals",0)');
+    tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (5, "Seconde minerals",1)');
     tx.executeSql('INSERT INTO minerals (id, name, choose) VALUES (6, "Seconde minerals",0)');
     
     
@@ -167,7 +198,7 @@ function populateDB(tx){
     tx.executeSql('CREATE TABLE IF NOT EXISTS precausions (id INTEGER NOT NULL, name VARCHAR(25),  choose INTEGER(1), PRIMARY KEY (id))');
     tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (1, "Premier precausions", 0)');
     tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (2, "Seconde precausions", 0)');
-    tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (3, "Seconde precausions", 0)');
+    tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (3, "Seconde precausions", 1)');
     tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (4, "Seconde precausions", 0)');
     tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (5, "Seconde precausions", 0)');
     tx.executeSql('INSERT INTO precausions (id, name, choose) VALUES (6, "Seconde precausions", 0)');
@@ -184,6 +215,10 @@ function populateDB(tx){
     tx.executeSql('INSERT INTO products (id, name, disease, vitamins, acids, minerals, precausions) VALUES (4, "Product 4",1, "[]", "[1]", "[]", "[1]")');
     tx.executeSql('INSERT INTO products (id, name, disease, vitamins, acids, minerals, precausions) VALUES (5, "Product 5",4, "[]", "[2]", "[]", "[3]")');
     tx.executeSql('INSERT INTO products (id, name, disease, vitamins, acids, minerals, precausions) VALUES (6, "Product 6",4, "[0]", "[1]", "[2]", "[4]")');
+    
+    tx.executeSql('DROP TABLE IF EXISTS query_statement');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS query_statement(id INTEGER NOT NULL, query_string VARCHAR(255), PRIMARY KEY(id))');
+    tx.executeSql('INSERT INTO query_statement (id, query_string) VALUES (1,"")');
 }
 
 function error(err){
