@@ -17,7 +17,7 @@ Ext.application({
                         'PrecausionModel'
                         
                 ],
-    views: ['Main', 'LaunchView', 'CardView', 'ConfigureView', 'DiseaseListView', 'VitaminListView', 'MineralListView', 'AcidListView', 'PrecausionListView'],
+    views: ['Main', 'LaunchView', 'CardView', 'ConfigureView', 'DiseaseListView', 'VitaminListView', 'MineralListView', 'AcidListView', 'PrecausionListView', 'ProductNavigationView'],
                 controllers: ['MainController'],
     icon: {
         '57': 'resources/icons/Icon.png',
@@ -43,9 +43,11 @@ Ext.application({
 
         // Initialize the main view
         var db = window.openDatabase("Database", "1.0", "PhoneGap Demo", 200000);
-        db.transaction(populateDB, error);
+        //db.transaction(populateDB, error);
         db.transaction(queryDB, error)
-        Ext.Viewport.add(Ext.create('sencha.view.CardView'));
+        db.transaction(checkDoneStatus, error)
+        
+        
     },
     current: "",
     onUpdated: function() {
@@ -60,6 +62,24 @@ Ext.application({
         );
     }
 });
+
+
+function checkDoneStatus(tx){
+    tx.executeSql('select done_status from done_status where id=1', [], checkDoneStatusSuccess, error)
+}
+function checkDoneStatusSuccess(tx, results){
+    console.log(results.rows.item(0).done_status)
+    var doneStatus = results.rows.item(0).done_status;
+    if(doneStatus == 1){
+        var indexPanel = Ext.create('sencha.view.CardView');
+        Ext.Viewport.add(indexPanel)
+        Ext.getCmp('cardview-id').setActiveItem(2);
+    }else{      
+        var indexPanel = Ext.create('sencha.view.CardView');
+        Ext.Viewport.add(indexPanel)
+        Ext.getCmp('cardview-id').setActiveItem(0);
+    }
+}
 function queryDB(tx){
     sencha.app.current = "Disease";
     tx.executeSql('select * from diseases', [], function(tx, results){ sencha.app.current = "Disease"; bindStore(sencha.app.current, results); }, error)
