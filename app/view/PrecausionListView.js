@@ -22,9 +22,7 @@ var tpl = new Ext.XTemplate(
 Ext.define('sencha.view.PrecausionListView', {
            extend: 'Ext.List',
            xtype: 'precausionlistview',
-           config: {
-          // title: 'Acid List View',
-          // iconCls: 'user',
+           config: {        
            store: 'PrecausionStore',
            useTitleAsBackText: true,
            itemTpl: tpl
@@ -34,6 +32,7 @@ Ext.define('sencha.view.PrecausionListView', {
 function saveStatusOfPrecausion(id){
     var storeName = 'PrecausionStore';
     sencha.app.storeName = 'PrecausionStore';
+    sencha.app.currentId = id;
     saveByStore(id, storeName)
     
 }

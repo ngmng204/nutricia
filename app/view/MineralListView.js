@@ -22,9 +22,7 @@ var tpl = new Ext.XTemplate(
 Ext.define('sencha.view.MineralListView', {
            extend: 'Ext.List',
            xtype: 'minerallistview',
-           config: {
-           //title: 'Acid List View',
-           //iconCls: 'user',
+           config: {          
            store: 'MineralStore',
            useTitleAsBackText: true,
            itemTpl: tpl
@@ -34,6 +32,7 @@ Ext.define('sencha.view.MineralListView', {
 function saveStatusOfMineral(id){
     var storeName = 'MineralStore';
     sencha.app.storeName = 'MineralStore';
+    sencha.app.currentId = id;
     saveByStore(id, storeName)
     
 }
